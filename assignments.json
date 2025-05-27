@@ -1,0 +1,20 @@
+{
+    "Math": {
+        "Apa": {
+            "info": "Apa",
+            "due_date": "2025-06-19"
+        }
+    },
+    "English": {
+        "Sigmna": {
+            "info": "123",
+            "due_date": "2025-06-01"
+        }
+    },
+    "Art": {
+        "Sigma": {
+            "info": "This is a hard tingy",
+            "due_date": "2025-09-10"
+        }
+    }
+}
