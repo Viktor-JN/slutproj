@@ -3,8 +3,7 @@ import datetime
 import tkinter as tk
 import tkinter.messagebox as messagebox
 
-#=============file handling==================
-# This is the file handling part of the code. It loads and saves assignments to a JSON file.
+# DEnna delen är för att hantera filen assignments.json. Den läser in och sparar data i JSON-format.
 
 def load_assignments(filename="assignments.json"):
     with open(filename, 'r') as f:
@@ -14,13 +13,12 @@ def save_assignments(assignments, filename="assignments.json"):
     with open(filename, "w") as f:
         json.dump(assignments, f, indent=4)
 
-#=============functions==================
-# This is the main part of the code. It defines functions to add subjects and assignments, and calculate due dates.
+#Funktionerna nedan är för att hantera ämnen och uppgifter. De lägger till ämnen och uppgifter, validerar datumformat och räknar dagar kvar till förfallodatum.
 
 def add_subject(subject):
     assignments = load_assignments()
     if subject in assignments:
-        return subject + " already exists."
+        return subject + " already exists." # Om ämnet redan finns, returnera ett meddelande
     else:
         assignments[subject] = {}
         save_assignments(assignments)
@@ -38,15 +36,15 @@ def add_assignment(subject, assignment, info, due_date):
         assignments[subject][assignment] ={
             "info": info,
             "due_date": due_date,
-        }
+        } # Lägger till uppgiften i det valda ämnet
 
         save_assignments(assignments)
 
 def validate_date_format(date_str):
     try:
-        datetime.datetime.strptime(date_str, "%Y-%m-%d")
+        datetime.datetime.strptime(date_str, "%Y-%m-%d") # Kontrollerar om datumet är i formatet YYYY-MM-DD
         return True
-    except ValueError:
+    except:
         return False
 
 
@@ -54,10 +52,10 @@ def days_til_due(subject, assignment):
     assignments = load_assignments("assignments.json")
     due_date_str = assignments[subject][assignment]["due_date"]
 
-    # Convert the due_date string to a datetime.date object
+    # Konverterar due_date_str till ett datetime-objekt
     due_date_obj = datetime.datetime.strptime(due_date_str, "%Y-%m-%d").date()
 
-    # Calculate the difference from today
+    # Räkna ut skillnaden i dagar mellan idag och förfallodatumet
     today = datetime.date.today()
     days_left = (due_date_obj - today).days
 
@@ -77,12 +75,11 @@ def remove_subject(subject):
         save_assignments(assignments)
         refresh_subjects()
 
-#=============GUI==================
-# This is the GUI part of the code. It creates a Tkinter window and adds buttons and labels to it.
+# Gui delen av koden
 
 def new_window(windowType):
     global new_win
-    if new_win is None or not new_win.winfo_exists():
+    if new_win is None or not new_win.winfo_exists(): #Förhindrar att flera fönster öppnas samtidigt
         if windowType == "new_subject":
             new_win = tk.Toplevel(root)
             new_win.title("New Subject")
@@ -94,7 +91,7 @@ def new_window(windowType):
             subject_label.pack(pady=10)
             subject_entry = tk.Entry(new_win, bg="lightyellow")
             subject_entry.pack(pady=10)
-            subject_button = tk.Button(new_win, text="Add Subject", bg="lightyellow", command=lambda: [add_subject(subject_entry.get()), refresh_subjects(), new_win.destroy()])
+            subject_button = tk.Button(new_win, text="Add Subject", bg="lightyellow", command=lambda: [add_subject(subject_entry.get()), refresh_subjects(), new_win.destroy()]) #Lägger till ämnet i listan
             subject_button.pack(pady=10)
 
         elif windowType == "new_assignment":
@@ -161,7 +158,7 @@ def check_assignments(subject):
     global new_win
     assignments = load_assignments()
     
-    if new_win is None or not new_win.winfo_exists():
+    if new_win is None or not new_win.winfo_exists(): #Förhindrar att flera fönster öppnas samtidigt
         new_win = tk.Toplevel(root)
         new_win.title(f"Assignments: {subject}")
         new_win.geometry("420x400")
@@ -169,7 +166,7 @@ def check_assignments(subject):
         new_win.resizable(False, False)
 
         # Create a canvas and scrollbar
-        canvas = tk.Canvas(new_win, bg="lightblue", highlightthickness=0)
+        canvas = tk.Canvas(new_win, bg="lightblue", highlightthickness=0) #Skapar en canvas för att visa uppgifterna
         scrollbar = tk.Scrollbar(new_win, orient="vertical", command=canvas.yview)
         scroll_frame = tk.Frame(canvas, bg="lightblue")
 
@@ -178,22 +175,22 @@ def check_assignments(subject):
             lambda e: canvas.configure(
                 scrollregion=canvas.bbox("all")
             )
-        )
+        ) # Binder scroll_frame till canvas så att den kan scrollas
 
-        canvas.create_window((0, 0), window=scroll_frame, anchor="nw")
+        canvas.create_window((0, 0), window=scroll_frame, anchor="nw") # Skapar ett fönster i canvas där scroll_frame kommer att visas
         canvas.configure(yscrollcommand=scrollbar.set)
 
         canvas.pack(side="left", fill="both", expand=True)
         scrollbar.pack(side="right", fill="y")
 
-        for j in assignments[subject]:
+        for j in assignments[subject]: # Loopar igenom alla uppgifter i det valda ämnet och visar dem i scroll_frame
             tk.Label(scroll_frame, text=f"Assignment: {j}", bg="lightblue").pack(anchor="w", padx=10)
             tk.Label(scroll_frame, text=f"Info: {assignments[subject][j]['info']}", bg="lightblue").pack(anchor="w", padx=10)
             tk.Label(scroll_frame, text=f"Due date: {assignments[subject][j]['due_date']}", bg="lightblue").pack(anchor="w", padx=10)
             tk.Label(scroll_frame, text=f"Days left: {days_til_due(subject, j)}", bg="lightblue").pack(anchor="w", padx=10)
             tk.Label(scroll_frame, text="-----------------------------------", bg="lightblue").pack(anchor="w", padx=10, pady=5)
 
-        # Button to remove an assignment
+        # Knapp för att ta bort och lägga till uppgifter
         remove_button = tk.Button(scroll_frame, text="Remove Assignment", bg="lightyellow", command=lambda: remove_window(subject))
         remove_button.pack(pady=10)
         add_assignment_button = tk.Button(scroll_frame, text="Add Assignment", bg="lightyellow", command=lambda: [new_win.destroy(), assignment_in_subject(subject)])
@@ -206,7 +203,7 @@ def refresh_subjects():
     for i in assignments:
         subject_list.insert(tk.END, i)
 
-def get_selection(mylistbox):
+def get_selection(mylistbox): # Hämtar det valda ämnet från listboxen
     selection = mylistbox.curselection()
     if selection:
         index = selection[0]
@@ -255,6 +252,8 @@ def remove_window(subject):
     )
     remove_button.pack(pady=10)
 
+
+# Själva GUI-koden börjar här
 
 new_win = None  # Reference for the new window
 root = tk.Tk()
