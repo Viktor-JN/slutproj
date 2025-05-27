@@ -3,7 +3,7 @@ import datetime
 import tkinter as tk
 import tkinter.messagebox as messagebox
 
-# DEnna delen är för att hantera filen assignments.json. Den läser in och sparar data i JSON-format.
+# Denna delen är för att hantera filen assignments.json. Den läser in och sparar data i JSON-format.
 
 def load_assignments(filename="assignments.json"):
     with open(filename, 'r') as f:
@@ -224,8 +224,8 @@ def confirm_and_remove_subject(subject):
 def remove_window(subject):
     assignments = load_assignments()
     if subject not in assignments or not assignments[subject]:
-        return  # No assignments to remove
-
+        return  # Om det valdaämnet inte finns eller inte finns uppgifter i det, returnera inget
+    
     remove_window = tk.Toplevel(new_win)
     remove_window.title("Remove Assignment")
     remove_window.geometry("300x200")
@@ -235,16 +235,16 @@ def remove_window(subject):
 
     tk.Label(remove_window, text="Select assignment to remove:", bg="lightblue").pack(pady=10)
 
-    # Create a StringVar and OptionMenu for assignments
+    # Skapar en dropdown för att välja uppgift att ta bort
     selected_assignment = tk.StringVar(remove_window)
     assignment_names = list(assignments[subject].keys())
-    selected_assignment.set(assignment_names[0])  # default value
+    selected_assignment.set(assignment_names[0])
 
     dropdown = tk.OptionMenu(remove_window, selected_assignment, *assignment_names)
     dropdown.configure(bg="lightyellow")
     dropdown.pack(pady=10)
 
-    # Remove button that deletes selected assignment
+    # Knapp för att ta bort den valda uppgiften
     remove_button = tk.Button(
         remove_window,
         text="Remove",
@@ -256,7 +256,7 @@ def remove_window(subject):
 
 # Själva GUI-koden börjar här
 
-new_win = None  # Reference for the new window
+new_win = None # Variabel för att hålla koll ifall ett nytt fönster är öppet eller inte
 root = tk.Tk()
 root.resizable(False, False)
 root.title("Assignment Tracker")
