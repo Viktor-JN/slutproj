@@ -126,7 +126,7 @@ def new_window(windowType):
             assignment_button.pack(pady=10)
 
         else:
-            new_win.lift()  # Bring to front if it's already open
+            new_win.lift()  # Ta fram det befintliga fönstret om det redan finns
 
 def assignment_in_subject(subject):
     new_win = tk.Toplevel(root)
@@ -158,7 +158,7 @@ def check_assignments(subject):
     global new_win
     assignments = load_assignments()
     
-    if new_win is None or not new_win.winfo_exists(): #Förhindrar att flera fönster öppnas samtidigt
+    if new_win is None or not new_win.winfo_exists():#Förhindrar att flera fönster öppnas samtidigt
         new_win = tk.Toplevel(root)
         new_win.title(f"Assignments: {subject}")
         new_win.geometry("420x400")
@@ -197,11 +197,12 @@ def check_assignments(subject):
         add_assignment_button.pack(pady=10)
 
 
-def refresh_subjects():
+def refresh_subjects(): #Uppdaterar listan med ämnen i listboxen
     assignments = load_assignments()
     subject_list.delete(0, tk.END)
     for i in assignments:
         subject_list.insert(tk.END, i)
+
 
 def get_selection(mylistbox): # Hämtar det valda ämnet från listboxen
     selection = mylistbox.curselection()
